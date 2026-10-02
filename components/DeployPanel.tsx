@@ -18,6 +18,7 @@ import { NETWORK, PHASE1_ARTIFACT } from "../lib/guard/network.ts";
 import { fetchContractWasm, verifyWasmIdentity } from "../lib/guard/chain.ts";
 import { toHex } from "stellar-agent-guard-sdk";
 import { validateInitParameters, type InitValidation } from "../lib/guard/initValidator.ts";
+import { sanitizeAddressInput } from "../lib/guard/inputSanitizer.ts";
 import {
   contractAlreadyDeployed,
   createSaltAddressPredictor,

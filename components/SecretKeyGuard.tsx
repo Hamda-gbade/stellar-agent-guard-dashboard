@@ -115,9 +115,7 @@ export function SecretKeyGuard() {
           for public keys (G…), contract IDs (C…) and raw public keys (hex) — never seeds.
         </p>
         {alert.attempts > 1 && (
-          <p className="tiny muted">
-            Blocked {alert.attempts} attempts in this session.
-          </p>
+          <p className="tiny muted">Blocked {alert.attempts} attempts in this session.</p>
         )}
         <div className="row">
           <button className="danger" onClick={dismissSecretKeyAlert}>

@@ -157,7 +157,9 @@ function readClipboardText(event: Event): string | null {
  */
 function clearInputValue(element: HTMLInputElement | HTMLTextAreaElement): void {
   const prototype =
-    element instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+    element instanceof HTMLTextAreaElement
+      ? HTMLTextAreaElement.prototype
+      : HTMLInputElement.prototype;
   const setter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
   if (setter) setter.call(element, "");
   else element.value = "";
