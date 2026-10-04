@@ -58,10 +58,18 @@ test("the expiring scenario crosses into expired exactly at zero", () => {
 });
 
 test("the expiring scenario settles into fired after the settle window", () => {
-  const midSettle = tickScenario("expiring", T0, T0 + (SIMULATION_GRACE_SECS + FIRED_SETTLE_SECS / 2) * 1000);
+  const midSettle = tickScenario(
+    "expiring",
+    T0,
+    T0 + (SIMULATION_GRACE_SECS + FIRED_SETTLE_SECS / 2) * 1000,
+  );
   assert.equal(midSettle.phase, "expired");
 
-  const settled = tickScenario("expiring", T0, T0 + (SIMULATION_GRACE_SECS + FIRED_SETTLE_SECS) * 1000);
+  const settled = tickScenario(
+    "expiring",
+    T0,
+    T0 + (SIMULATION_GRACE_SECS + FIRED_SETTLE_SECS) * 1000,
+  );
   assert.equal(settled.phase, "fired");
   assert.equal(settled.percentElapsed, 100);
   assert.equal(settled.remaining, -FIRED_SETTLE_SECS);
@@ -76,7 +84,11 @@ test("the countdown never goes below the fired settle bound", () => {
 test("clock going backwards cannot un-fire the switch", () => {
   // A trainee's laptop waking from sleep can report an earlier tick; the
   // scenario must never resurrect grace that already drained.
-  const after = tickScenario("expiring", T0, T0 + (SIMULATION_GRACE_SECS + FIRED_SETTLE_SECS + 5) * 1000);
+  const after = tickScenario(
+    "expiring",
+    T0,
+    T0 + (SIMULATION_GRACE_SECS + FIRED_SETTLE_SECS + 5) * 1000,
+  );
   assert.equal(after.phase, "fired");
   const backwards = tickScenario("expiring", T0, T0 + 5_000);
   // Backwards is a *different* state, but it is recomputed from the same
@@ -128,7 +140,11 @@ test("the simulated status reports a stale heartbeat consistent with the phase",
 });
 
 test("the simulated status flips heartbeat_expired once grace is gone", () => {
-  const fired = tickScenario("expiring", T0, T0 + (SIMULATION_GRACE_SECS + FIRED_SETTLE_SECS) * 1000);
+  const fired = tickScenario(
+    "expiring",
+    T0,
+    T0 + (SIMULATION_GRACE_SECS + FIRED_SETTLE_SECS) * 1000,
+  );
   const simulated = simulatedStatus(REAL_STATUS, fired);
   assert.equal(simulated.heartbeat_expired, true);
   // The synthetic heartbeat is older than `now`, matching the fired story.
@@ -234,7 +250,9 @@ test("simulated alerts escalate warn then danger across the lifecycle", () => {
   assert.match(early.message, /HEARTBEAT STALE/);
   assert.match(early.message, /simulated/i);
 
-  const fired = simulatedAlert(tickScenario("expiring", T0, T0 + (SIMULATION_GRACE_SECS + FIRED_SETTLE_SECS) * 1000));
+  const fired = simulatedAlert(
+    tickScenario("expiring", T0, T0 + (SIMULATION_GRACE_SECS + FIRED_SETTLE_SECS) * 1000),
+  );
   assert.equal(fired.severity, "danger");
   assert.match(fired.message, /DMS FIRED/);
   assert.match(fired.message, /simulated/i);

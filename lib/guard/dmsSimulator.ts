@@ -122,7 +122,10 @@ export function simulatedHeartbeat(nowSecs: bigint, state: SimulationState): big
   // armed, then went silent. Silence age is the drained grace, capped at the
   // full window — once the switch has fired the beat stops getting older,
   // because the account froze; time did not keep counting on the ledger.
-  const silenceAge = Math.min(SIMULATION_GRACE_SECS, Math.max(0, SIMULATION_GRACE_SECS - state.remaining));
+  const silenceAge = Math.min(
+    SIMULATION_GRACE_SECS,
+    Math.max(0, SIMULATION_GRACE_SECS - state.remaining),
+  );
   return nowSecs - BigInt(Math.round(silenceAge));
 }
 
@@ -178,7 +181,10 @@ export function describeSimulation(state: SimulationState): string {
  * This is a *description* of the synthetic alert, not a notification: the
  * simulator never calls webhooks, pagers, or the network.
  */
-export function simulatedAlert(state: SimulationState): { severity: "warn" | "danger"; message: string } {
+export function simulatedAlert(state: SimulationState): {
+  severity: "warn" | "danger";
+  message: string;
+} {
   if (state.phase === "within-grace") {
     return {
       severity: "warn",
