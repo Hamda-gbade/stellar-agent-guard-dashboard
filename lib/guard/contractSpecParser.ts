@@ -94,7 +94,10 @@ function readWasmHeader(wasm: Uint8Array): { offset: number } | null {
  * Returns the value and the offset just past it, or `null` when the encoding
  * is malformed (truncated, over-long, or exceeding 32 bits).
  */
-function readVarUint32(bytes: Uint8Array, offset: number): { value: number; offset: number } | null {
+function readVarUint32(
+  bytes: Uint8Array,
+  offset: number,
+): { value: number; offset: number } | null {
   let value = 0;
   let shift = 0;
   for (;;) {

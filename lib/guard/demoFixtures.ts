@@ -341,14 +341,36 @@ function buildDemoProtocolWasm(): Uint8Array {
     );
 
   const entries = [
-    fn("swap", [["trader", address], ["amount_in", i128], ["min_out", i128]], i128),
-    fn("deposit", [["provider", address], ["amount", i128]], voidType),
-    fn("withdraw", [["provider", address], ["amount", i128]], voidType),
+    fn(
+      "swap",
+      [
+        ["trader", address],
+        ["amount_in", i128],
+        ["min_out", i128],
+      ],
+      i128,
+    ),
+    fn(
+      "deposit",
+      [
+        ["provider", address],
+        ["amount", i128],
+      ],
+      voidType,
+    ),
+    fn(
+      "withdraw",
+      [
+        ["provider", address],
+        ["amount", i128],
+      ],
+      voidType,
+    ),
     fn("heartbeat", [["clock", u64]], voidType),
   ];
   const specStream = new Uint8Array(entries.flatMap((entry) => Array.from(entry.toXdr())));
   return buildWasmModule("contractspecv0", specStream);
-}/**
+} /**
  * Wrap a payload as a WASM custom section, inside a minimal valid module.
  *
  * Used by the demo fixture builder only; the tests build their own fixtures

@@ -292,9 +292,7 @@ export async function fetchContractWasm(
  * contract's fault — a Wrong-Chain contract id, an RPC outage — so the caller
  * gets a typed failure it can show, rather than a throw it must catch.
  */
-export type ContractWasmResult =
-  | { ok: true; wasm: Uint8Array }
-  | { ok: false; error: string };
+export type ContractWasmResult = { ok: true; wasm: Uint8Array } | { ok: false; error: string };
 
 /**
  * Fetch a contract's WASM and extract its exported functions from the embedded
@@ -313,7 +311,11 @@ export async function readContractSpec(
     const wasm = await fetchContractWasm(server, contractId);
     return parseContractSpec(wasm);
   } catch (error) {
-    return { ok: false, reason: "fetch", error: error instanceof Error ? error.message : String(error) };
+    return {
+      ok: false,
+      reason: "fetch",
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 

@@ -817,7 +817,8 @@ code {
   max-height: 160px;
   overflow: auto;
   white-space: pre-wrap;
-  word-break: break-all;}
+  word-break: break-all;
+}
 
 /*
  * Function picker (contract-spec-driven allowlist selection).

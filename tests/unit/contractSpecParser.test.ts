@@ -31,7 +31,9 @@ function fnEntry(
     new xdr.ScSpecFunctionV0({
       name,
       doc,
-      inputs: inputs.map(([inputName, type]) => new xdr.ScSpecFunctionInputV0({ name: inputName, type, doc: "" })),
+      inputs: inputs.map(
+        ([inputName, type]) => new xdr.ScSpecFunctionInputV0({ name: inputName, type, doc: "" }),
+      ),
       outputs: output ? [output] : [],
     }),
   );
@@ -43,7 +45,9 @@ function structEntry(name: string, fields: Array<[string, TypeDef]>): xdr.ScSpec
       name,
       doc: "",
       lib: "",
-      fields: fields.map(([fieldName, type]) => new xdr.ScSpecUdtStructFieldV0({ name: fieldName, type, doc: "" })),
+      fields: fields.map(
+        ([fieldName, type]) => new xdr.ScSpecUdtStructFieldV0({ name: fieldName, type, doc: "" }),
+      ),
     }),
   );
 }
@@ -74,7 +78,13 @@ const WASM_HEADER = [0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00];
 /** One WASM custom section (no module header), lengths LEB128-encoded. */
 function customSection(sectionName: string, payload: Uint8Array): Uint8Array {
   const name = new TextEncoder().encode(sectionName);
-  return new Uint8Array([0, ...leb128(1 + name.length + payload.length), name.length, ...name, ...payload]);
+  return new Uint8Array([
+    0,
+    ...leb128(1 + name.length + payload.length),
+    name.length,
+    ...name,
+    ...payload,
+  ]);
 }
 
 /** LEB128 u32, the width WASM uses for every length field. */
@@ -130,7 +140,14 @@ const SAC_FUNCTIONS = [
   ),
   fnEntry("set_admin", [["new_admin", address]], voidT),
   fnEntry("balance", [["id", address]], i128),
-  fnEntry("burn", [["from", address], ["amount", i128]], voidT),
+  fnEntry(
+    "burn",
+    [
+      ["from", address],
+      ["amount", i128],
+    ],
+    voidT,
+  ),
   // Present in real SAC specs; the picker must hide it.
   fnEntry("__constructor", [["admin", address]], voidT),
 ];
@@ -242,7 +259,9 @@ test("the custom section survives other sections around it", () => {
     ...customSection(CONTRACT_SPEC_SECTION, spec),
     1, // type section id (non-custom)
     ...leb128(3),
-    0x60, 0x00, 0x00, // a func type: no params, no results
+    0x60,
+    0x00,
+    0x00, // a func type: no params, no results
   ]);
 
   const sections = parseWasmCustomSections(moduleBytes);
@@ -275,7 +294,9 @@ test("a multi-payload spec (repeated sections) concatenates", () => {
 
 test("a stripped module (no custom sections) reports stripped, not corrupt", () => {
   // A structurally valid module: just the header and a non-custom section.
-  const stripped = new Uint8Array([0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x03, 0x01, 0x00, 0x00]);
+  const stripped = new Uint8Array([
+    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x03, 0x01, 0x00, 0x00,
+  ]);
   const result = parseContractSpec(stripped);
   assert.equal(result.ok, false);
   if (result.ok) return;
@@ -306,7 +327,10 @@ test("a corrupt spec stream reports corrupt and keeps decodable prefixes", () =>
     ...leb128(1 + 14 + 4),
     14,
     ...new TextEncoder().encode(CONTRACT_SPEC_SECTION),
-    1, 2, 3, 4, // not a valid ScSpecEntry
+    1,
+    2,
+    3,
+    4, // not a valid ScSpecEntry
   ]);
   const result = parseContractSpec(moduleBytes);
   assert.equal(result.ok, false);
@@ -328,7 +352,9 @@ test("a truncated tail keeps the decodable prefix of entries", () => {
 
 test("a malformed section size ends the walk without throwing", () => {
   // Section header claims more bytes than the module holds.
-  const moduleBytes = new Uint8Array([0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x01]);
+  const moduleBytes = new Uint8Array([
+    0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x00, 0xff, 0x01,
+  ]);
   const sections = parseWasmCustomSections(moduleBytes);
   assert.equal(sections.size, 0);
   const result = parseContractSpec(moduleBytes);
@@ -354,7 +380,9 @@ test("signatures render in the operator's terms", () => {
   const result = parseContractSpec(wasmModule(CONTRACT_SPEC_SECTION, specStream(DEX)));
   assert.equal(result.ok, true);
   if (!result.ok) return;
-  const swap = result.functions.find((fn) => fn.name === "swap_exact_tokens_for_tokens") as SpecFunction;
+  const swap = result.functions.find(
+    (fn) => fn.name === "swap_exact_tokens_for_tokens",
+  ) as SpecFunction;
   assert.equal(
     formatSpecSignature(swap),
     "swap_exact_tokens_for_tokens(amount_in: I128, min_amount_out: I128, path: Vec<Address>, to: Address, deadline: U64) -> Vec<I128>",

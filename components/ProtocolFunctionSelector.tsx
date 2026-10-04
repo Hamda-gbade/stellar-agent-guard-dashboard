@@ -28,7 +28,10 @@ import { isDemoMode } from "../lib/guard/demoFixtures.ts";
  * Everything here is a read: no simulation, no signing, and the fallback keeps
  * the form usable even when the RPC refuses the bytecode read.
  */
-export function ProtocolFunctionSelector({ draft, set }: {
+export function ProtocolFunctionSelector({
+  draft,
+  set,
+}: {
   draft: PolicyDraft;
   set: <K extends keyof PolicyDraft>(key: K, value: PolicyDraft[K]) => void;
 }) {
@@ -49,15 +52,19 @@ export function ProtocolFunctionSelector({ draft, set }: {
       const colon = trimmed.indexOf(":");
       const contract = colon < 0 ? trimmed : trimmed.slice(0, colon);
       const tail = colon < 0 ? "" : trimmed.slice(colon + 1);
-      const fns = tail.trim() === "" ? null : tail.split(",").map((fn) => fn.trim()).filter(Boolean);
+      const fns =
+        tail.trim() === ""
+          ? null
+          : tail
+              .split(",")
+              .map((fn) => fn.trim())
+              .filter(Boolean);
       out.push({ contract, fns });
     }
     return out;
   }, [draft.protocols]);
 
-  const activeRule = expanded
-    ? rules.find((rule) => rule.contract === expanded)
-    : undefined;
+  const activeRule = expanded ? rules.find((rule) => rule.contract === expanded) : undefined;
 
   // The load effect keys off the raw protocol lines, not derived objects:
   // `rules` is rebuilt every render, so depending on it would re-fetch forever.
@@ -77,7 +84,9 @@ export function ProtocolFunctionSelector({ draft, set }: {
   // picker stays on screen while a re-read is in flight. All state moves happen
   // together, once the chain (or the demo fixture) has answered.
   const fetchSpec = useCallback(
-    async (contract: string): Promise<{ result: ContractSpecResult | null; error: string | null }> => {
+    async (
+      contract: string,
+    ): Promise<{ result: ContractSpecResult | null; error: string | null }> => {
       // Demo mode fabricates a DEX-like spec so the picker is explorable with
       // no chain behind it; outside demo mode this is a real RPC read.
       if (isDemoMode()) {
@@ -117,7 +126,10 @@ export function ProtocolFunctionSelector({ draft, set }: {
     set("protocols", next.join("\n"));
   }
 
-  const names = useMemo(() => (functions ? exportedFunctionNames({ ok: true, functions }) : []), [functions]);
+  const names = useMemo(
+    () => (functions ? exportedFunctionNames({ ok: true, functions }) : []),
+    [functions],
+  );
 
   if (rules.length === 0) {
     return (
@@ -131,14 +143,18 @@ export function ProtocolFunctionSelector({ draft, set }: {
     <div className="field" style={{ marginTop: 8 }}>
       <span className="lbl">Allowed functions per protocol</span>
       <span className="hint">
-        Pick functions from the contract&apos;s own interface spec instead of typing symbols. A contract with no
-        selection allows any function.
+        Pick functions from the contract&apos;s own interface spec instead of typing symbols. A
+        contract with no selection allows any function.
       </span>
       <ul className="proto-list" style={{ listStyle: "none", margin: "8px 0 0", padding: 0 }}>
         {rules.map((rule) => {
           const isOpen = expanded === rule.contract;
           const summary =
-            rule.fns === null ? "any function" : rule.fns.length === 0 ? "no functions" : `${rule.fns.length} function(s)`;
+            rule.fns === null
+              ? "any function"
+              : rule.fns.length === 0
+                ? "no functions"
+                : `${rule.fns.length} function(s)`;
           return (
             <li key={rule.contract} style={{ marginBottom: 6 }}>
               <button
@@ -147,7 +163,8 @@ export function ProtocolFunctionSelector({ draft, set }: {
                 aria-expanded={isOpen}
                 onClick={() => setExpanded(isOpen ? null : rule.contract)}
               >
-                {isOpen ? "▾" : "▸"} <span className="mono">{rule.contract.slice(0, 12)}…</span> — {summary}
+                {isOpen ? "▾" : "▸"} <span className="mono">{rule.contract.slice(0, 12)}…</span> —{" "}
+                {summary}
               </button>
               {isOpen && (
                 <div style={{ marginTop: 6 }}>
@@ -183,14 +200,18 @@ export function ProtocolFunctionSelector({ draft, set }: {
                       value={rule.fns?.join(",") ?? ""}
                       placeholder="swap, deposit"
                       onChange={(event) => {
-                        const fns = event.target.value.split(",").map((fn) => fn.trim()).filter(Boolean);
+                        const fns = event.target.value
+                          .split(",")
+                          .map((fn) => fn.trim())
+                          .filter(Boolean);
                         replaceRule(rule.contract, fns.length > 0 ? fns : null);
                       }}
                     />
                   )}
                   {names.length > 0 && (
                     <p className="tiny muted" style={{ marginTop: 4 }}>
-                      {names.length} exported function{names.length === 1 ? "" : "s"} found in the contract spec.
+                      {names.length} exported function{names.length === 1 ? "" : "s"} found in the
+                      contract spec.
                     </p>
                   )}
                 </div>

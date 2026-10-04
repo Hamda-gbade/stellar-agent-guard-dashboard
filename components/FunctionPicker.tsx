@@ -59,7 +59,11 @@ export function FunctionPicker({
   useEffect(() => {
     if (!open) return;
     function onPointerDown(event: PointerEvent) {
-      if (rootRef.current && event.target instanceof Node && !rootRef.current.contains(event.target)) {
+      if (
+        rootRef.current &&
+        event.target instanceof Node &&
+        !rootRef.current.contains(event.target)
+      ) {
         setOpen(false);
       }
     }
@@ -156,7 +160,13 @@ export function FunctionPicker({
       </div>
 
       {showList && (
-        <ul id={listboxId} role="listbox" aria-label={`Exported functions of ${contractLabel}`} className="fn-list" ref={listRef}>
+        <ul
+          id={listboxId}
+          role="listbox"
+          aria-label={`Exported functions of ${contractLabel}`}
+          className="fn-list"
+          ref={listRef}
+        >
           {matches.map((option, index) => {
             const isSelected = selectedSet.has(option.name);
             const doc = firstDocSentence(option);
@@ -176,7 +186,13 @@ export function FunctionPicker({
                 onClick={() => toggle(option.name)}
                 onMouseEnter={() => setActiveIndex(index)}
               >
-                <input type="checkbox" checked={isSelected} readOnly tabIndex={-1} aria-hidden="true" />
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  readOnly
+                  tabIndex={-1}
+                  aria-hidden="true"
+                />
                 <span className="fn-name mono">{option.name}</span>
                 <span className="fn-sig tiny muted">{formatSpecSignature(option)}</span>
                 {doc && <span className="fn-doc tiny muted">{doc}</span>}
